@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 
-const API = "http://https://portal-backend-k7i8.onrender.com/api";
+const API = "https://portal-backend-k7i8.onrender.com/api";
 
 function App() {
   const [page, setPage] = useState("login");
