@@ -126,16 +126,18 @@ app.post("/api/auth/register", async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const [result] = await db.query(
-            "INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
-            [name.trim(), normalizedEmail, hashedPassword]
-        );
+const [result] = await db.query(
+    `INSERT INTO users (id, name, email, password)
+     SELECT COALESCE(MAX(id), 0) + 1, ?, ?, ?
+     FROM users`,
+    [name.trim(), normalizedEmail, hashedPassword]
+);
 
-        const user = {
-            id: result.insertId,
-            name: name.trim(),
-            email: normalizedEmail
-        };
+const user = {
+    id: result.insertId,
+    name: name.trim(),
+    email: normalizedEmail
+};
 
         const token = jwt.sign(
             user,
