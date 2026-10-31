@@ -394,24 +394,30 @@ app.post(
 
             const resumePath = req.file.filename;
 
-            await db.query(
-                `INSERT INTO applications
-                (user_id, job_id, full_name, email, phone,
-                 college, course, graduation_year, cover_letter, resume_path)
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-                [
-                    req.user.id,
-                    job_id,
-                    full_name,
-                    email,
-                    phone,
-                    college,
-                    course,
-                    graduation_year,
-                    cover_letter || "",
-                    resumePath
-                ]
-            );
+// Generate the next application ID
+const [[row]] = await db.query(
+    "SELECT COALESCE(MAX(id), 0) + 1 AS nextId FROM applications"
+);
+
+await db.query(
+    `INSERT INTO applications
+    (id, user_id, job_id, full_name, email, phone,
+     college, course, graduation_year, cover_letter, resume_path)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [
+        row.nextId,
+        req.user.id,
+        job_id,
+        full_name,
+        email,
+        phone,
+        college,
+        course,
+        graduation_year,
+        cover_letter || "",
+        resumePath
+    ]
+);
 
             res.status(201).json({
                 message: "Application submitted successfully!"
