@@ -12,7 +12,10 @@ const db = require("./db");
 const app = express();
 
 app.use(cors({
-    origin: "http://localhost:5173"
+    origin: [
+        "http://localhost:5173",
+        "https://portal-jobs-internships.netlify.app"
+    ]
 }));
 
 app.use(express.json());
